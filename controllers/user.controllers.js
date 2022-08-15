@@ -4,6 +4,11 @@ const userModel = require('../models/user/user.model');
 const Materials = require('../models/material/material.model')
 const mongoose = require('mongoose')
 
+const { createMollieClient, PaymentMethod } = require('@mollie/api-client')
+
+const mollieClient = createMollieClient({ apiKey: 'test_jAGDJmjEGayPHV735jAKd4vTUJq9yx' })
+
+
 exports.register = (req, res) => {
     console.log(req.body.username);
     bcrypt.hash(req.body.password, 10)
@@ -66,6 +71,8 @@ exports.login = (req, res) => {
                             message: 'Password incorrect'
                         })
                     }
+                    user.isConnected = true;
+                    // console.log('User :: ', user);
                     res.status(200).json({
                         status: true,
                         data: user,
@@ -136,6 +143,92 @@ exports.addProduct = (req, res) => {
         )
 }
 
+exports.createPayment = async(req, res) => {
+
+    userModel.findOne({ _id: req.body.idUser })
+        .then(async(user) => {
+            var product = await Materials.findOne({
+                _id: req.body.idProduct
+            })
+            var amount = product.price.toString()
+            amount = amount.slice(0, -1).replace(',', '.')
+                // console.log('Value : ', amount.slice(0, -1).replace(',', '.'))
+                // console.log('Type: ', typeof(amount));
+            if (amount > user.wallet) {
+                res.json({
+                    status: false,
+                    message: 'Insufficient of fund'
+                })
+            }
+            try {
+                const customer = await mollieClient.customers.create({
+                    name: user.username,
+                    email: user.email
+                })
+
+                console.log(customer);
+
+                const payment = await mollieClient.payments.create({
+                    amount: {
+                        value: amount,
+                        currency: 'EUR'
+                    },
+                    // details: customer,
+                    customerId: customer.id,
+                    metadata: customer,
+                    method: PaymentMethod.creditcard,
+                    description: product.title,
+                    redirectUrl: 'http://localhost:4200/home/list',
+                    // webhookUrl: 'http://localhost:4200/home/list'
+                })
+
+                console.log('PAYMMENT ', payment);
+
+                res.json({
+                    payment: payment,
+                    status: true
+                })
+            } catch (err) {
+                res.json({
+                    status: false,
+                    message: err.message
+                })
+                throw new Error('Payment not load' + err.message)
+            }
+
+        })
+
+}
+
+exports.getPayment = async(req, res) => {
+    try {
+        console.log('Payment ID : ', req.params.idPayment)
+        const payment = await mollieClient.payments.get(req.params.idPayment);
+        res.json({
+            payment: payment,
+            status: true
+        })
+    } catch (err) {
+        throw new Error('ERROR.GET.PAYMENT ' + err)
+    }
+}
+
+exports.listPayment = async(req, res) => {
+    try {
+        const paymentList = await mollieClient.payments.list({
+            limit: 20
+        })
+
+        res.json({
+            paymentList: paymentList,
+            status: true
+        })
+    } catch (err) {
+        throw new Error('ERROR.LIST.PAYMENT' + err)
+    }
+}
+
+
 exports.deleteInCart = (req, res) => {
     const token = req.header('Authorization').split(' ')[2];
     var idProduct = req.body.idProduct;
@@ -188,7 +281,7 @@ exports.deleteInCart = (req, res) => {
 
 
 exports.updateUser = (req, res) => {
-    console.log('updating...', req.body);
+    // console.log('updating...', req.body);
     const token = req.header('Authorization').split(' ')[2];
     const _id = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     console.log('id => ', typeof(_id.userId));
@@ -198,7 +291,7 @@ exports.updateUser = (req, res) => {
         })
         .then(
             user => {
-                console.log(user);
+                // console.log(user);
                 user.name = req.body.name;
                 user.username = req.body.username;
                 user.wallet = req.body.wallet;

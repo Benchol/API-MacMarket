@@ -26,7 +26,11 @@ const User = mongoose.Schema({
     cart: [{
         type: mongoose.Types.ObjectId,
         ref: 'Materials'
-    }]
+    }],
+    isConnected: {
+        type: Boolean,
+        default: false
+    }
 })
 
 

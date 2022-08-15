@@ -26,12 +26,20 @@ exports.getAllMaterials = (req, res) => {
             )
 
             // console.log(materials);
-
-            res.status(200).json({
-                data: dataToSend,
-                status: true,
-                message: 'Get all material successfully !!'
-            })
+            if (req.user) {
+                res.status(200).json({
+                    user: req.user,
+                    data: dataToSend,
+                    status: true,
+                    message: 'Get all material successfully !!'
+                })
+            } else {
+                res.status(200).json({
+                    data: dataToSend,
+                    status: true,
+                    message: 'Get all material successfully !!'
+                })
+            }
         })
         .catch(err => {
             res.status(404).json({
