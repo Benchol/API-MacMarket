@@ -16,7 +16,13 @@ const session = require('./middlewares/redis.session')
 //     .then(() => console.log('Connexion à MongoDB réussie !'))
 //     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-mongoose.connect('mongodb+srv://ben:@azertyu@realmcluster.xk6sb.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://ben:azertyu@cluster0.l0kgtb4.mongodb.net/electronicMaterial?retryWrites=true&w=majority', {
+
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => console.log('Connexion à MongoDB réussie !'))
+    .catch(() => console.log('Connexion à MongoDB échouée !'))
 
 app.use(bodyParser.json())
 
@@ -33,5 +39,6 @@ app.use('/upload', express.static('public'))
 // app.use(session)
 app.use('/api/user', userRoutes)
 app.use('/api/material', materialsRoutes)
+app.use('/', express.static('./public'))
 
 module.exports = app;
