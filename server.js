@@ -1,7 +1,8 @@
-const http = require('http')
+const http = require('http');
+const { env } = require('process');
 const app = require('./app')
 
-const port = 3000;
+const port = PROCESS.env.PORT || 3000;
 
 const errorHandler = error => {
     if (error.syscall !== 'listen') {
