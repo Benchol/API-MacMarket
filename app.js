@@ -17,7 +17,6 @@ const session = require('./middlewares/redis.session')
 //     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 mongoose.connect('mongodb+srv://ben:azertyu@cluster0.l0kgtb4.mongodb.net/electronicMaterial?retryWrites=true&w=majority', {
-
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
