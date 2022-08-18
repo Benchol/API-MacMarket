@@ -10,8 +10,8 @@ module.exports = async(req, res, next) => {
 
     // console.log('eserr : ', user);
     if (req.header('Authorization')) {
-        var decoded = jwt.decode(req.header('Authorization').split(' ')[2])
 
+        var decoded = jwt.decode(req.header('Authorization').split(' ')[2])
         var idUser = decoded.userId
             // console.log('id', idUser);
         let user = await sessionModel.findOne({ _id: idUser })
