@@ -9,14 +9,14 @@ const userRoutes = require('./routes/user.routes')
 const setSession = require('./middlewares/auth.session')
 const session = require('./middlewares/redis.session')
 
-// mongoose.connect('mongodb://localhost:27017/electronicMaterial', {
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true
-//     })
-//     .then(() => console.log('Connexion à MongoDB réussie !'))
-//     .catch(() => console.log('Connexion à MongoDB échouée !'));
+mongoose.connect('mongodb://localhost:27017/electronicMaterial', {
+        //         useNewUrlParser: true,
+        //         useUnifiedTopology: true
+        //     })
+        //     .then(() => console.log('Connexion à MongoDB réussie !'))
+        //     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-mongoose.connect('mongodb+srv://ben:azertyu@cluster0.l0kgtb4.mongodb.net/electronicMaterial?retryWrites=true&w=majority', {
+        // mongoose.connect('mongodb+srv://ben:azertyu@cluster0.l0kgtb4.mongodb.net/electronicMaterial?retryWrites=true&w=majority', {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
