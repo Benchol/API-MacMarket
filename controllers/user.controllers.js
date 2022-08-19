@@ -178,7 +178,7 @@ exports.createPayment = async(req, res) => {
                     metadata: customer,
                     method: PaymentMethod.creditcard,
                     description: product.title,
-                    redirectUrl: 'http://localhost:4200/home/list',
+                    redirectUrl: 'https://mac-market-app.herokuapp.com/home/list',
                     // webhookUrl: 'http://localhost:4200/home/list'
                 })
 
